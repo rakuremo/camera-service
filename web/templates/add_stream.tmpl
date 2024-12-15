@@ -1,0 +1,99 @@
+{{template "head.tmpl" .}}
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Thêm kênh camera</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/">Trang chính</a></li>
+          <li class="breadcrumb-item active">Thêm kênh camera</li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</div>
+
+
+
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row" id="streams-form-wrapper">
+
+        <div class="col-12">
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Kênh camera chính</h3>
+            </div>
+              <div class="card-body">
+                <form class="stream-form main-form">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Tên luồng</label>
+                  <input type="text" class="form-control" name="stream-name" placeholder="Nhập tên luồng camera" id="stream-name">
+                  <small  class="form-text text-muted">Tên tùy chọn cho camera, ví dụ "Osaka 1" hoặc "Kyoto"</small>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Link camera</label>
+                  <input type="text" name="stream-url" class="form-control"  placeholder="Nhập link RTSP của camera">
+                  <small  class="form-text text-muted">Nhập đường dẫn RTSP của camera, ví dụ như <code>rtsp://&lt;ip&gt;:&lt;port&gt;/path </code> </small>
+                </div>
+                <div class="form-group">
+                  <label for="inputStatus">Lựa chọn chế độ</label>
+                  <select class="form-control custom-select" name="stream-ondemand">
+                    <option selected disabled><small>Chọn một</small></option>
+                    <option value="1">Load khi có người xem</option>
+                    <option value="0">Giữ kết nối (ổn định hơn)</option>
+                  </select>
+                  <small  class="form-text text-muted">Chế độ khi có người xem sẽ chỉ chuyển đổi stream khi có người chủ động xem, chế độ giữ kết nối sẽ luôn giữ kết nối với camera</small>
+                </div>
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" name="debug" id="debug-switch">
+                    <label class="custom-control-label" for="debug-switch">Cho phép debug</label>
+                  </div>
+                  <small  class="form-text text-muted">Không chọn nếu bạn là người dùng (dành cho developer)</small>
+                </div>
+              </form>
+              </div>
+            </div>
+          </div>
+          </div>
+
+        <div class="row  mb-3">
+            <div class="col-12">
+              <button type="button" onclick="addChannel()" class="btn btn-secondary">Thêm kênh camera</button>
+              <button type="button" onclick="addStreamSubmit()" class="btn btn-primary">Lưu</button>
+            </div>
+        </div>
+    </div>
+  </section>
+
+{{template "foot.tmpl" .}}
+
+<script>
+function addStreamSubmit(){
+  var params = {
+    uuid:randomUuid(),
+    name:$('#stream-name').val(),
+    channels:{}
+  }
+
+  $('.stream-form').each(function(i){
+    params.channels[i]={
+        url:$(this).find('input[name="stream-url"]').val(),
+        on_demand:Boolean(parseInt($(this).find('select[name="stream-ondemand"]').val())),
+        debug:Boolean($(this).find('input[name="debug"]').prop('checked')),
+    }
+    if(params.channels[i].on_demand==null){
+      params.channels[i].on_demand==true;
+    }
+  });
+  goRequest('add', params.uuid, params);
+}
+
+
+
+
+</script>

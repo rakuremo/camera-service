@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>Quản lý camera</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #e9ecef; /* Softer background color */
+    }
+    .login-box {
+      margin-top: 40vh; /* Center vertically */
+      padding: 40px; /* Increased padding for a more spacious feel */
+      border-radius: 15px; /* Slightly more rounded corners */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
+      background-color: white;
+      display: flex; /* Use flexbox for layout */
+      justify-content: space-between; /* Space between logo and form */
+      align-items: center; /* Center items vertically */
+      transform: translateY(-50%); /* Center vertically */
+    }
+    .login-logo {
+      flex: 2; /* Allow logo to take available space */
+      text-align: center; /* Align logo to the right */
+    }
+    .login-form {
+      flex: 1; /* Allow form to take more space */
+      padding-right: 20px; /* Space between logo and form */
+    }
+    h2 {
+      font-size: 35px; /* Increased font size for the main title */
+      margin-bottom: 20px; /* Increased margin below the title */
+    }
+    h4.login-box-msg {
+      font-size: 25px; /* Increased font size for the message */
+      margin-bottom: 20px; /* Increased margin below the message */
+    }
+    .form-group label {
+      font-size: 20px; /* Increased font size for labels */
+      margin-bottom: 10px; /* Increased margin below labels */
+    }
+    .form-control {
+      font-size: 20px; /* Increased font size for input fields */
+      padding: 10px; /* Increased padding for input fields */
+    }
+    .btn-primary {
+      width: 30%; /* Set width of button */
+      font-size: 16px; /* Increased font size for button */
+      padding: 10px; /* Increased padding for button */
+    }
+  </style>
+  <script>
+    function submitForm(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const data = {
+        username: username,
+        password: password,
+        remember: false // Include remember field
+      };
+
+      fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then(data => {
+            throw new Error('Login failed. Please try again. Msg: ' + data.payload);
+          });
+        }
+      })
+      .then(data => {
+        window.location.href = '/pages/stream/list';
+      })
+      .catch(error => {
+        alert("Đăng nhập không thành công, vui lòng kiểm tra lại tài khoản/mật khẩu");
+      });
+    }
+  </script>
+</head>
+
+<body class="hold-transition login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="../static/img/banner.svg" alt="Company Logo" style="align-self: center;">
+    </div>
+    <div class="login-form">
+      <h2>Quản lý Camera</h2>
+      <h4 class="login-box-msg">Vui lòng đăng nhập</h4>
+
+      {{ if .Error }}
+      <div class="alert alert-danger" role="alert">
+        {{ .Error }}
+      </div>
+      {{ end }}
+
+      <form onsubmit="submitForm(event)">
+        <div class="form-group">
+          <label for="username">Tên người dùng:</label>
+          <input type="text" id="username" name="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu:</label>
+          <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <div style="flex: auto; align-items: center;">
+            <input type="submit" value="Đăng nhập" class="btn btn-primary btn-block" style="width: auto; align-self: center;">            
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
